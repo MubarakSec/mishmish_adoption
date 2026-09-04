@@ -89,6 +89,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'تم إرسال رمز التحقق إلى بريدك الإلكتروني بنجاح',
+            'code' => $code,
         ]);
     }
 

@@ -56,12 +56,16 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   Future<void> _resend() async {
     setState(() => _resending = true);
     try {
-      await ApiService.forgotPassword(widget.email);
+      final res = await ApiService.forgotPassword(widget.email);
       if (mounted) {
+        final code = res['code'];
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إعادة إرسال رمز التحقق إلى بريدك الإلكتروني بنجاح'),
+          SnackBar(
+            content: Text(code != null
+                ? 'تم إعادة الإرسال! (رمز التحقق الجديد: $code)'
+                : 'تم إعادة إرسال رمز التحقق إلى بريدك الإلكتروني بنجاح'),
             backgroundColor: Colors.green,
+            duration: const Duration(seconds: 8),
           ),
         );
       }

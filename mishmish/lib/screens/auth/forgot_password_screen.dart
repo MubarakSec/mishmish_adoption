@@ -20,12 +20,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     }
     setState(() => _loading = true);
     try {
-      await ApiService.forgotPassword(_emailController.text.trim());
+      final res = await ApiService.forgotPassword(_emailController.text.trim());
       if (mounted) {
+        final code = res['code'];
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إرسال رمز التحقق إلى بريدك بنجاح'),
+          SnackBar(
+            content: Text(code != null
+                ? 'تم إرسال الرمز بنجاح! (رمز التحقق: $code)'
+                : 'تم إرسال رمز التحقق إلى بريدك بنجاح'),
             backgroundColor: Colors.green,
+            duration: const Duration(seconds: 8),
           ),
         );
         Navigator.push(

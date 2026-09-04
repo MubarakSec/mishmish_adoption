@@ -4,28 +4,43 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  // For physical devices over Wi-Fi, set your PC's LAN IP here:
+  // Manual override if needed:
   // static String? overrideHost = '192.168.1.100';
   static String? overrideHost;
+  static String _activeHost = '127.0.0.1';
 
   static String get baseUrl {
     if (overrideHost != null && overrideHost!.isNotEmpty) {
       return 'http://$overrideHost:8000/api';
     }
-    if (kIsWeb) {
-      return 'http://127.0.0.1:8000/api';
+    return 'http://$_activeHost:8000/api';
+  }
+
+  static Future<http.Response> _post(String endpoint, {Map<String, String>? headers, Object? body}) async {
+    try {
+      return await http
+          .post(Uri.parse('$baseUrl$endpoint'), headers: headers, body: body)
+          .timeout(const Duration(seconds: 4));
+    } catch (_) {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android && _activeHost == '127.0.0.1') {
+        _activeHost = '10.0.2.2';
+        return await http.post(Uri.parse('$baseUrl$endpoint'), headers: headers, body: body);
+      }
+      rethrow;
     }
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.android:
-        // 10.0.2.2 connects to host localhost on standard Android Emulator
-        return 'http://10.0.2.2:8000/api';
-      case TargetPlatform.iOS:
-      case TargetPlatform.macOS:
-      case TargetPlatform.windows:
-      case TargetPlatform.linux:
-        return 'http://127.0.0.1:8000/api';
-      default:
-        return 'http://10.0.2.2:8000/api';
+  }
+
+  static Future<http.Response> _get(String endpoint, {Map<String, String>? headers}) async {
+    try {
+      return await http
+          .get(Uri.parse('$baseUrl$endpoint'), headers: headers)
+          .timeout(const Duration(seconds: 4));
+    } catch (_) {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android && _activeHost == '127.0.0.1') {
+        _activeHost = '10.0.2.2';
+        return await http.get(Uri.parse('$baseUrl$endpoint'), headers: headers);
+      }
+      rethrow;
     }
   }
   static String? _token;
@@ -67,8 +82,8 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> register(String name, String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/register'),
+    final response = await _post(
+      '/register',
       headers: await _headers(),
       body: jsonEncode({'name': name, 'email': email, 'password': password, 'password_confirmation': password}),
     );
@@ -76,8 +91,8 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/login'),
+    final response = await _post(
+      '/login',
       headers: await _headers(),
       body: jsonEncode({'email': email, 'password': password}),
     );
@@ -85,13 +100,13 @@ class ApiService {
   }
 
   static Future<void> logout() async {
-    await http.post(Uri.parse('$baseUrl/logout'), headers: await _headers());
+    await _post('/logout', headers: await _headers());
     await clearToken();
   }
 
   static Future<Map<String, dynamic>> forgotPassword(String email) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/forgot-password'),
+    final response = await _post(
+      '/forgot-password',
       headers: await _headers(),
       body: jsonEncode({'email': email}),
     );
@@ -99,8 +114,8 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> verifyCode(String email, String code) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/verify-code'),
+    final response = await _post(
+      '/verify-code',
       headers: await _headers(),
       body: jsonEncode({'email': email, 'code': code}),
     );
@@ -108,8 +123,8 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> resetPassword(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/reset-password'),
+    final response = await _post(
+      '/reset-password',
       headers: await _headers(),
       body: jsonEncode({'email': email, 'password': password, 'password_confirmation': password}),
     );
@@ -117,20 +132,20 @@ class ApiService {
   }
 
   static Future<List<dynamic>> getKittens() async {
-    final response = await http.get(Uri.parse('$baseUrl/kittens'), headers: await _headers());
+    final response = await _get('/kittens', headers: await _headers());
     final data = _handleResponse(response);
     return data is List ? data : [];
   }
 
   static Future<List<dynamic>> getFavorites() async {
-    final response = await http.get(Uri.parse('$baseUrl/favorites'), headers: await _headers());
+    final response = await _get('/favorites', headers: await _headers());
     final data = _handleResponse(response);
     return data is List ? data : [];
   }
 
   static Future<bool> toggleFavorite(int kittenId) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/favorites/$kittenId'),
+    final response = await _post(
+      '/favorites/$kittenId',
       headers: await _headers(),
     );
     final data = _handleResponse(response);

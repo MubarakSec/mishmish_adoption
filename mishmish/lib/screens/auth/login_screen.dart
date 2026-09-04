@@ -72,10 +72,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 36),
                 TextFormField(
                   controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
                   textDirection: TextDirection.ltr,
-                  decoration: const InputDecoration(hintText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
-                  validator: (v) => v == null || v.isEmpty ? 'أدخل البريد الإلكتروني' : null,
+                  decoration: const InputDecoration(
+                    hintText: 'البريد أو اسم المستخدم (Email / User)',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                  validator: (v) => v == null || v.trim().isEmpty ? 'أدخل البريد أو اسم المستخدم' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(

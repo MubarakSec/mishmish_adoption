@@ -51,9 +51,15 @@ class ProfileTab extends StatelessWidget {
             children: [
               const SizedBox(height: 30),
               Container(
-                width: 100, height: 100,
-                decoration: const BoxDecoration(color: Color(0xFFFF6B6B), shape: BoxShape.circle),
-                child: const Center(child: Text('🐱', style: TextStyle(fontSize: 50))),
+                width: 96,
+                height: 96,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFF6B6B),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(Icons.person, size: 56, color: Colors.white),
+                ),
               ),
               const SizedBox(height: 16),
               Text(name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),

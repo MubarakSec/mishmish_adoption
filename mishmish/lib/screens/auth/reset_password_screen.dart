@@ -13,28 +13,51 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
-  bool _obscure = true;
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
   bool _loading = false;
 
   Future<void> _reset() async {
-    if (_passwordController.text.isEmpty || _passwordController.text.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('كلمة المرور 6 أحرف على الأقل'), backgroundColor: Colors.red));
+    final password = _passwordController.text;
+    final confirm = _confirmController.text;
+
+    if (password.isEmpty || password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('كلمة المرور يجب ألا تقل عن 6 أحرف'), backgroundColor: Colors.red),
+      );
       return;
     }
-    if (_passwordController.text != _confirmController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('كلمتا المرور غير متطابقتين'), backgroundColor: Colors.red));
+    if (password != confirm) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('كلمتا المرور غير متطابقتين'), backgroundColor: Colors.red),
+      );
       return;
     }
     setState(() => _loading = true);
     try {
-      await ApiService.resetPassword(widget.email, _passwordController.text);
+      await ApiService.resetPassword(widget.email, password);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم تغيير كلمة المرور بنجاح!'), backgroundColor: Colors.green));
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const LoginScreen()), (r) => false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم إعادة تعيين كلمة المرور بنجاح! يمكنك تسجيل الدخول الآن'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (r) => false,
+        );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -44,37 +67,75 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('كلمة مرور جديدة')),
-      body: Padding(
-        padding: const EdgeInsets.all(30),
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: const Text('تعيين كلمة المرور')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('🔑', style: TextStyle(fontSize: 60)),
-            const SizedBox(height: 20),
-            const Text('أدخل كلمة المرور الجديدة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 30),
+            const SizedBox(height: 10),
+            Container(
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF6B6B).withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.lock_reset_rounded, size: 48, color: Color(0xFFFF6B6B)),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'كلمة مرور جديدة',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'قم بإدخال كلمة المرور الجديدة وتأكيدها لحسابك',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Color(0xFF636E72), height: 1.4),
+            ),
+            const SizedBox(height: 32),
             TextField(
               controller: _passwordController,
-              obscureText: _obscure,
+              obscureText: _obscurePassword,
               textDirection: TextDirection.ltr,
               decoration: InputDecoration(
                 hintText: 'كلمة المرور الجديدة',
                 prefixIcon: const Icon(Icons.lock_outlined),
-                suffixIcon: IconButton(icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility), onPressed: () => setState(() => _obscure = !_obscure)),
+                suffixIcon: IconButton(
+                  icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                ),
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _confirmController,
-              obscureText: true,
+              obscureText: _obscureConfirm,
               textDirection: TextDirection.ltr,
-              decoration: const InputDecoration(hintText: 'تأكيد كلمة المرور', prefixIcon: Icon(Icons.lock_outlined)),
+              decoration: InputDecoration(
+                hintText: 'تأكيد كلمة المرور',
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  icon: Icon(_obscureConfirm ? Icons.visibility_off : Icons.visibility),
+                  onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                ),
+              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _loading ? null : _reset,
-              child: _loading ? const CircularProgressIndicator(color: Colors.white) : const Text('تغيير كلمة المرور'),
+            const SizedBox(height: 28),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _reset,
+                child: _loading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Text('إعادة تعيين كلمة المرور'),
+              ),
             ),
           ],
         ),

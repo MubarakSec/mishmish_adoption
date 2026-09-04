@@ -20,15 +20,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     }
     setState(() => _loading = true);
     try {
-      final result = await ApiService.forgotPassword(_emailController.text);
+      await ApiService.forgotPassword(_emailController.text.trim());
       if (mounted) {
-        Navigator.push(context, MaterialPageRoute(
-          builder: (_) => VerifyCodeScreen(email: _emailController.text, code: result['code']),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم إرسال رمز التحقق إلى بريدك بنجاح'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => VerifyCodeScreen(email: _emailController.text.trim()),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -38,28 +52,57 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(title: const Text('نسيت كلمة المرور')),
-      body: Padding(
-        padding: const EdgeInsets.all(30),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('📧', style: TextStyle(fontSize: 60)),
             const SizedBox(height: 20),
-            const Text('أدخل بريدك الإلكتروني', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Container(
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF6B6B).withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.mark_email_read_outlined, size: 46, color: Color(0xFFFF6B6B)),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'استعادة كلمة المرور',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 10),
-            const Text('سنرسل لك رمز التحقق', style: TextStyle(color: Color(0xFF636E72))),
-            const SizedBox(height: 30),
+            const Text(
+              'أدخل بريدك الإلكتروني المسجل وسنرسل لك رمز التحقق (OTP) لإعادة تعيين كلمة المرور',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Color(0xFF636E72), height: 1.5),
+            ),
+            const SizedBox(height: 32),
             TextField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               textDirection: TextDirection.ltr,
-              decoration: const InputDecoration(hintText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
+              decoration: const InputDecoration(
+                hintText: 'Email',
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _loading ? null : _send,
-              child: _loading ? const CircularProgressIndicator(color: Colors.white) : const Text('إرسال الرمز'),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _send,
+                child: _loading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Text('إرسال رمز التحقق'),
+              ),
             ),
           ],
         ),

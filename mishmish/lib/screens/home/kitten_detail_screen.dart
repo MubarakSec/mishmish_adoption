@@ -61,7 +61,12 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
               background: Image.network(
                 'https://cataas.com/cat?width=600&height=600&random=${k.id}',
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(color: const Color(0xFFFFE0E0), child: const Center(child: Text('🐱', style: TextStyle(fontSize: 80)))),
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: const Color(0xFFFFF0F0),
+                  child: const Center(
+                    child: Icon(Icons.pets, size: 80, color: Color(0xFFFF6B6B)),
+                  ),
+                ),
               ),
             ),
             actions: [
@@ -106,7 +111,7 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: _adopt,
-                      icon: const Text('🐾', style: TextStyle(fontSize: 20)),
+                      icon: const Icon(Icons.pets, size: 20),
                       label: const Text('تبني الآن', style: TextStyle(fontSize: 18)),
                       style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
                     ),

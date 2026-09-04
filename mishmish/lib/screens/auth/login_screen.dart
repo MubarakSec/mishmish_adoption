@@ -48,12 +48,28 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 40),
-                const Text('🐱', style: TextStyle(fontSize: 60)),
-                const SizedBox(height: 10),
-                const Text('تسجيل الدخول', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                const Text('مرحباً بعودتك!', style: TextStyle(color: Color(0xFF636E72))),
-                const SizedBox(height: 40),
+                const SizedBox(height: 30),
+                Container(
+                  width: 84,
+                  height: 84,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF0F0),
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.asset(
+                    'assets/icon/cat_icon.png',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Center(
+                      child: Icon(Icons.pets, size: 44, color: Color(0xFFFF6B6B)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                const Text('تسجيل الدخول', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 6),
+                const Text('مرحباً بعودتك إلى مشمش!', style: TextStyle(color: Color(0xFF636E72), fontSize: 14)),
+                const SizedBox(height: 36),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,

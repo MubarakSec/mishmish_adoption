@@ -63,7 +63,17 @@ class _KittenCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => KittenDetailScreen(kitten: kitten))),
       child: Container(
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.07), blurRadius: 8, offset: const Offset(0, 2))]),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.07),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -74,7 +84,13 @@ class _KittenCard extends StatelessWidget {
                 height: 130,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(height: 130, color: const Color(0xFFFFE0E0), child: const Center(child: Text('🐱', style: TextStyle(fontSize: 50)))),
+                errorBuilder: (context, error, stackTrace) => Container(
+                  height: 130,
+                  color: const Color(0xFFFFF0F0),
+                  child: const Center(
+                    child: Icon(Icons.pets, size: 44, color: Color(0xFFFF6B6B)),
+                  ),
+                ),
               ),
             ),
             Padding(

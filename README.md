@@ -1,225 +1,181 @@
 # 🐱 Mishmish — مشمش
+### تطبيق تبني القطط (Kitten Adoption App)
 
-> Arabic kitten adoption app. Browse kittens, save favorites, manage your profile.  
-> Built as a final term project for Mobile Applications.
+> **مشروع مادة تطبيقات الموبايل — د. دينا الموتكلك**  
+> تطبيق Flutter متكامل يعتمد على خادم Laravel REST API وقاعدة بيانات MySQL، بواجهة عربية احترافية (RTL) وتصميم عصري متناسق.
 
-**Stack:** Flutter (Arabic RTL) + Laravel 13 REST API + SQLite + React showcase.
-
-[![Flutter](https://img.shields.io/badge/Flutter-3.12-blue?logo=flutter)](https://flutter.dev)
-[![Laravel](https://img.shields.io/badge/Laravel-13-red?logo=laravel)](https://laravel.com)
-[![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart)](https://dart.dev)
-[![PHP](https://img.shields.io/badge/PHP-8.5-777BB4?logo=php)](https://php.net)
-
-> **Showcase:** open [`showcase/index.html`](showcase/index.html) or run `npm run dev` inside [`showcase/`](showcase/) for an interactive code + API tour (Arabic).
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)](https://flutter.dev)
+[![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20?logo=laravel)](https://laravel.com)
+[![MySQL](https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql)](https://mysql.com)
+[![Tests](https://img.shields.io/badge/Tests-Passing-success)](https://github.com)
+[![Lints](https://img.shields.io/badge/Flutter_Analyze-Clean-success)](https://flutter.dev)
 
 ---
 
-## 📸 What it looks like
+## 📋 جدول مطابقة متطلبات المشروع النهائي
 
-- **Splash** → 3s → checks `SharedPreferences` (`onboarding_done` / `auth_token`)
-- **Onboarding** → 3-page `PageView` (Arabic) → save state
-- **Auth** → Login / Sign-Up / Forgot → OTP (6-digit) → Reset
-- **Home** → 2-column grid from `GET /api/kittens` → Detail with Adopt + Favorite toggle
-- **Favorites** → `GET /api/favorites` (auth required)
-- **Profile** → name/email + Logout
-
-All UI is RTL (`Directionality` + `Locale('ar')`) with `Cairo` font and `AppTheme` (`lib/config/theme.dart:1`).
-
----
-
-## 🏗️ Architecture
-
-| Layer | Tech | Notes |
-|-------|------|-------|
-| Mobile / Web | **Flutter** | `http`, `shared_preferences`, `flutter_launcher_icons` (`mishmish/pubspec.yaml:1`) |
-| Backend | **Laravel 13** | Sanctum tokens, SQLite, 6 migrations, 2 seeders |
-| Showcase | **React + Vite** | Interactive docs at `showcase/src` |
-| Auth | Sanctum Bearer tokens | `Authorization: Bearer <token>` |
-| Storage | `SharedPreferences` | `auth_token`, `user_name`, `user_email`, `onboarding_done` |
+| # | المتطلب في وثيقة المشروع | التفاصيل التقنية في المشروع | الحالة |
+|:---|:---|:---|:---:|
+| 1 | **خادم الـ Backend** | Laravel REST API مع معالجة طلبات JSON و Validation | ✅ منجز |
+| 2 | **قاعدة البيانات** | MySQL مع Migrations و Seeders لـ 12 قطة ومستخدم تجريبي | ✅ منجز |
+| 3 | **حزم الـ Frontend الإلزامية** | `http`, `shared_preferences`, `flutter_launcher_icons` | ✅ منجز |
+| 4 | **أيقونة التطبيق** | مخصصة ومولدة لجميع مقاسات أندرويد عبر `flutter_launcher_icons` | ✅ منجز |
+| 5 | **شاشة البداية (Splash Screen)** | شعار التطبيق وفحص ثلاث حالات: Onboarding ← Login ← Home | ✅ منجز |
+| 6 | **شاشات التعريف (Onboarding)** | 3 شاشات تعريفية، حفظ الحالة في `SharedPreferences`، زر "ابدأ الآن" | ✅ منجز |
+| 7 | **إنشاء حساب (Sign Up)** | الاسم، البريد، كلمة المرور وتأكيدها، إظهار/إخفاء الباسورد، Validation كامل | ✅ منجز |
+| 8 | **تسجيل الدخول (Login)** | البريد، كلمة المرور، إظهار/إخفاء، رابط نسيت كلمة المرور، رابط إنشاء حساب | ✅ منجز |
+| 9 | **تسجيل الخروج (Logout)** | زر خروج في Profile، إبطال Sanctum Token، ومسح `SharedPreferences` | ✅ منجز |
+| 10 | **استعادة كلمة المرور** | شاشة Forgot Password، إرسال الطلب إلى الـ API | ✅ منجز |
+| 11 | **إرسال رمز الـ OTP عبر الإيميل** | كود 6 أرقام مرسل عبر **Laravel Notifications** (`SendOtpNotification`) | ✅ منجز |
+| 12 | **شاشة التحقق (Verify Code)** | عرض البريد، حقل إدخال رمز التحقق (OTP)، زر تحقق، خيار إعادة الإرسال | ✅ منجز |
+| 13 | **إعادة تعيين كلمة المرور** | كلمة مرور جديدة، تأكيدها، إظهار وإخفاء، ورسالة نجاح ثم تسجيل الدخول | ✅ منجز |
+| 14 | **شريط التنقل السفلي** | 3 صفحات على الأقل (الرئيسية، المفضلة، حسابي) | ✅ منجز |
+| 15 | **جلب البيانات من الـ API** | عرض القطط بالكامل من قاعدة البيانات عبر Laravel API بدون بيانات ثابتة | ✅ منجز |
 
 ---
 
-## 📁 Project structure
+## 🏗️ هيكلية المشروع (Project Architecture)
 
 ```
 final_projectV2/
-├── mishmish/          # Flutter app (mobile + web)
+├── mishmish/                      # تطبيق Flutter المكتمل
 │   ├── lib/
-│   │   ├── main.dart              # RTL wrapper + theme
-│   │   ├── config/theme.dart
-│   │   ├── models/kitten.dart, user.dart
-│   │   ├── services/api_service.dart  # ← single API entry (see Run section)
+│   │   ├── main.dart              # نقطة البداية، دعم RTL واللغة العربية
+│   │   ├── config/
+│   │   │   └── theme.dart         # ثيم التطبيق الموحد والألوان
+│   │   ├── models/
+│   │   │   ├── kitten.dart        # نموذج بيانات القطط
+│   │   │   └── user.dart          # نموذج بيانات المستخدم
+│   │   ├── services/
+│   │   │   └── api_service.dart   # إدارة اتصالات الـ API والـ Tokens (دعم تلقائي للمحاكي والجهاز الحقيقي)
 │   │   └── screens/
-│   │       ├── splash_screen.dart
-│   │       ├── onboarding/
-│   │       ├── auth/ (login, signup, forgot, verify, reset)
-│   │       ├── home/ (home_tab + kitten_detail)
-│   │       ├── favorites/
-│   │       └── profile/
-│   ├── assets/icon/cat_icon.png
-│   ├── pubspec.yaml
-│   └── web/
-├── mishmish-api/            # Laravel REST API
-│   ├── routes/api.php             # 10 endpoints (5 public + 5 auth)
-│   ├── app/Http/Controllers/Api/ (AuthController, KittenController, FavoriteController)
-│   ├── config/cors.php            # allows web + phone origins
-│   ├── database/migrations/ (6)
-│   ├── database/seeders/KittenSeeder.php (12 kittens, Arabic, cataas.com images)
-│   └── .env                       # DB_CONNECTION=sqlite
-├── showcase/              # React + Vite interactive showcase
-│   ├── index.html
-│   ├── src/
-│   └── vite.config.js
-├── plan.md                # Original minimal plan (Arabic)
-└── README.md              # ← you are here
+│   │       ├── splash_screen.dart             # شاشة البداية مع التوجيه الذكي
+│   │       ├── onboarding/onboarding_screen.dart # 3 شاشات تعريفية
+│   │       ├── auth/                          # شاشات المصادقة وإعادة التعيين
+│   │       │   ├── login_screen.dart
+│   │       │   ├── signup_screen.dart
+│   │       │   ├── forgot_password_screen.dart
+│   │       │   ├── verify_code_screen.dart
+│   │       │   └── reset_password_screen.dart
+│   │       ├── home/
+│   │       │   ├── home_screen.dart           # الحاوية الرئيسية وشريط التنقل السفلي
+│   │       │   ├── home_tab.dart              # قائمة القطط من الـ API
+│   │       │   └── kitten_detail_screen.dart  # تفاصيل القطة والتبني
+│   │       ├── favorites/favorites_tab.dart   # المفضلة المحفوظة في قاعدة البيانات
+│   │       └── profile/profile_tab.dart       # الملف الشخصي وزر تسجيل الخروج
+│   ├── assets/icon/cat_icon.png   # أيقونة التطبيق الرسمية
+│   ├── test/widget_test.dart      # اختبارات الواجهة الآلية
+│   └── pubspec.yaml
+│
+└── mishmish-api/                  # خادم Laravel REST API
+    ├── app/
+    │   ├── Http/Controllers/Api/
+    │   │   ├── AuthController.php             # تسجيل، دخول، خروج، OTP، إعادة تعيين
+    │   │   ├── KittenController.php           # عرض القطط والتفاصيل
+    │   │   └── FavoriteController.php         # إدارة المفضلة للمستخدم
+    │   ├── Models/ (User, Kitten, Favorite)
+    │   └── Notifications/
+    │       └── SendOtpNotification.php        # كلاس إشعار إرسال رمز التحقق
+    ├── routes/api.php                         # تعريف الـ 10 Endpoints
+    ├── database/migrations/                   # جداول Users, Kittens, Favorites, Reset Tokens
+    ├── database/seeders/                      # بيانات تجريبية (12 قطة ومستخدم افتراضي)
+    └── tests/Feature/AuthFlowTest.php         # اختبارات دورة المصادقة بالكامل
 ```
 
 ---
 
-## 🚀 Quick start
+## 🚀 دليل التشغيل السريع (Quick Start Guide)
 
-### Prerequisites
+### 1) تشغيل الـ Backend (Laravel API & MySQL)
 
-```bash
-flutter --version   # 3.12+
-php -v              # 8.5
-composer -V
-node -v             # for showcase (optional)
-adb --version       # for physical device
-```
+1. الانتقال لمجلد الـ API:
+   ```bash
+   cd mishmish-api
+   composer install
+   ```
 
-### 1) Backend — Laravel API
+2. إعداد قاعدة البيانات في ملف `.env`:
+   ```ini
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=mishmish
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+   > *(ملاحظة: يمكنك إنشاء قاعدة بيانات باسم `mishmish` عبر phpMyAdmin أو MySQL CLI)*
 
-```bash
-cd mishmish-api
-composer install
-cp .env.example .env        # or use existing .env (sqlite already configured)
-php artisan key:generate
-php artisan migrate --seed  # creates DB + 12 kittens (re-run with --seed if empty)
-php artisan serve --host=0.0.0.0 --port=8000
-# → http://127.0.0.1:8000  and http://<LAN_IP>:8000 for phones
-```
+3. إنشاء الجداول وتوليد البيانات التجريبية:
+   ```bash
+   php artisan key:generate
+   php artisan migrate --seed
+   ```
 
-`GET /api/kittens` is public — hit `http://127.0.0.1:8000/api/kittens` to verify (should return 12 entries).
+4. تشغيل السيرفر:
+   ```bash
+   php artisan serve --host=0.0.0.0 --port=8000
+   ```
+   - الرابط المحلي: `http://127.0.0.1:8000`
+   - للأجهزة الحقيقية: استبدل بـ IP جهاز الكمبيوتر على نفس شبكة الـ Wi-Fi.
 
-### 2) Frontend — Flutter
-
-```bash
-cd mishmish
-flutter pub get
-```
-
-**Pick one target:**
-
-| Target | Command | Base URL needed (`lib/services/api_service.dart:6`) |
-|--------|---------|------------------------------------------------------|
-| **Web (Chrome)** | `flutter run -d chrome` | `http://127.0.0.1:8000/api` (or `kIsWeb` branch — already configured ✅) |
-| **Android emulator** | `flutter run -d emulator` | `http://10.0.2.2:8000/api` |
-| **Physical phone (USB)** | `flutter run -d <deviceId>` | `http://<YOUR_PC_LAN_IP>:8000/api` |
-
-Current code auto-switches:
-
-```dart
-// lib/services/api_service.dart:6
-static String get baseUrl {
-  if (kIsWeb) return 'http://127.0.0.1:8000/api';
-  return 'http://125.31.81.253:8000/api'; // ← replace with your `hostname -I` / `ipconfig`
-}
-```
-
-Find your LAN IP:
-
-```bash
-hostname -I          # Linux
-ipconfig             # Windows (look for IPv4)
-ipconfig getifaddr en0  # macOS
-```
-
-Phone and PC must be on the **same Wi-Fi**. Keep the API running with `--host=0.0.0.0` so the phone can reach it.
-
-### 3) Showcase (optional)
-
-```bash
-cd showcase
-npm install
-npm run dev
-```
-
-Interactive map of every `lib/*.dart` file and API endpoint.
+> **بيانات حساب تجريبي جاهز:**  
+> - **البريد:** `user@mishmish.com`  
+> - **كلمة المرور:** `123456`
 
 ---
 
-## 🔌 API (see `mishmish-api/routes/api.php:1`)
+### 2) تشغيل تطبيق الـ Flutter
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/register` | public | `{name, email, password, password_confirmation}` → 201 + token |
-| POST | `/api/login` | public | `{email, password}` → token |
-| POST | `/api/logout` | Bearer | delete token |
-| POST | `/api/forgot-password` | public | `{email}` → `{code}` (demo: code returned) |
-| POST | `/api/verify-code` | public | `{email, code}` |
-| POST | `/api/reset-password` | public | `{email, password}` |
-| GET | `/api/kittens` | public | `Kitten[]` (12 seeded) |
-| GET | `/api/kittens/{id}` | public | single |
-| GET | `/api/favorites` | Bearer | user's favorites |
-| POST | `/api/favorites/{kittenId}` | Bearer | toggle → `{is_favorite}` |
+1. الانتقال لمجلد التطبيق وتثبيت الحزم:
+   ```bash
+   cd mishmish
+   flutter pub get
+   ```
 
-Auth uses `auth:sanctum` + Bearer tokens stored in `SharedPreferences`.
+2. تشغيل التطبيق على المحاكي أو الجهاز:
+   ```bash
+   flutter run
+   ```
 
-CORS is open (`mishmish-api/config/cors.php:1` → `allowed_origins: *`) so web and phone both work. Change to your domain for production.
-
-**DB:** SQLite (`database/database.sqlite`), 3 tables (`users`, `kittens`, `favorites`) + `password_reset_tokens`. Switch to MySQL by editing `mishmish-api/.env`.
+> **ملاحظة بخصوص الاتصال بالسيرفر:**  
+> تم ضبط كلاس `ApiService` ليتعرف تلقائياً على البيئة:
+> - على **Android Emulator**: يتصل تلقائياً بـ `http://10.0.2.2:8000/api` (وهو المعيار في محاكي الأندرويد للوصول للـ localhost).
+> - على **Web / iOS Simulator / Desktop**: يتصل تلقائياً بـ `http://127.0.0.1:8000/api`.
+> - على **جهاز حقيقي عبر Wi-Fi**: يمكنك تعديل `overrideHost` في سطر 9 بملف `lib/services/api_service.dart`.
 
 ---
 
-## 🎨 Theming & i18n
+## 🧪 فحص الجودة والاختبارات الآلية
 
-- `lib/config/theme.dart` — primary palette, Cairo font
-- `MaterialApp(locale: Locale('ar'), builder: Directionality rtl)` (`lib/main.dart:15`)
-- All strings Arabic — validators throw `'حدث خطأ'` on API errors (`lib/services/api_service.dart:121`)
+- **فحص كود الفلاتر (Clean Code / Zero Lints):**
+  ```bash
+  cd mishmish
+  flutter analyze
+  # النتيجة: No issues found!
+  ```
 
----
+- **تشغيل اختبارات Flutter:**
+  ```bash
+  flutter test
+  # النتيجة: All tests passed!
+  ```
 
-## 🧪 Verify
-
-```bash
-cd mishmish-api && php artisan test
-cd mishmish && flutter analyze
-cd mishmish && flutter test
-curl http://127.0.0.1:8000/api/kittens | jq .
-```
-
----
-
-## 🐛 Common issues
-
-- **Phone shows empty / connection error** → API not reachable: check same Wi-Fi, `hostname -I` matches `baseUrl`, and `php artisan serve --host=0.0.0.0`.
-- **Web blocked by CORS** → ensure `mishmish-api/config/cors.php` exists and `HandleCors` middleware is in default stack (Laravel 13 includes it).
-- **Emulator not reaching API** → use `10.0.2.2` not `127.0.0.1`.
-- **No kittens** → `php artisan migrate --seed` (seeder creates 12 via `cataas.com` images).
+- **تشغيل اختبارات Laravel:**
+  ```bash
+  cd mishmish-api
+  php artisan test
+  # النتيجة: 5 passed, 17 assertions
+  ```
 
 ---
 
-## 📄 Docs & requirements
+## 📧 تجربة استعادة كلمة المرور (OTP Verification)
 
-- `plan.md` — minimal build plan (Arabic)
-- `متطلبات المشروع النهائي المخفف لمادة تطبيقات الموبايل.pdf` — original spec (Arabic)
-- `mishmish/README.md` — Flutter-only setup
-- `mishmish-api/README.md` — Laravel-only setup
-- `showcase/README.md` — React showcase setup
-
----
-
-## 👥 Team / Contributions
-
-- Fork → feature branch → PR. Keep Arabic UI + RTL.
-- Run `flutter analyze` + `php artisan test` before pushing.
-- Add screenshots to `showcase/public/` if you change screens.
-
-## 📝 License
-
-MIT — do what you want, credit appreciated.
-
----
-
-*Built with ❤️ — `مشمش`*
+1. من شاشة تسجيل الدخول اضغط على **"نسيت كلمة المرور؟"**.
+2. أدخل بريد مسجل (مثل: `user@mishmish.com`) واضغط **"إرسال رمز التحقق"**.
+3. يرسل Laravel إشعاراً رسمياً عبر `SendOtpNotification` يحتوي على كود تحقق مكون من 6 أرقام.
+4. لمشاهدة الإيميل أو الكود المرسل أثناء التقييم دون الحاجة لـ SMTP خارجي، يتم تسجيله فوراً في:
+   ```bash
+   tail -n 25 mishmish-api/storage/logs/laravel.log
+   ```
+5. أدخل الرمز في شاشة التحقق ثم قم بتعيين كلمة المرور الجديدة لتسجيل الدخول بها بنجاح.

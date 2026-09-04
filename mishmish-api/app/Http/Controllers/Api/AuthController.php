@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Notifications\SendOtpNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -71,16 +73,19 @@ class AuthController extends Controller
             return response()->json(['message' => 'البريد الإلكتروني غير مسجل'], 404);
         }
 
-        $code = Str::random(6);
+        // Generate 6-digit OTP verification code
+        $code = sprintf('%06d', mt_rand(100000, 999999));
         DB::table('password_reset_tokens')->updateOrInsert(
             ['email' => $request->email],
             ['token' => $code, 'created_at' => now()]
         );
 
-        // In a real app, send email. For demo, return code directly.
+        // Send via Laravel Notification
+        $user->notify(new SendOtpNotification($code));
+        Log::info("Verification OTP for {$user->email}: {$code}");
+
         return response()->json([
-            'message' => 'تم إرسال رمز التحقق',
-            'code' => $code, // Demo: return code directly
+            'message' => 'تم إرسال رمز التحقق إلى بريدك الإلكتروني بنجاح',
         ]);
     }
 

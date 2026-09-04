@@ -16,6 +16,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
   bool _obscurePassword = true;
+  bool _obscureConfirm = true;
   bool _loading = false;
 
   Future<void> _signup() async {
@@ -51,13 +52,32 @@ class _SignupScreenState extends State<SignupScreen> {
             key: _formKey,
             child: Column(
               children: [
-                const SizedBox(height: 20),
-                const Text('🐱', style: TextStyle(fontSize: 60)),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF0F0),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.asset(
+                    'assets/icon/cat_icon.png',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Center(
+                      child: Icon(Icons.pets, size: 40, color: Color(0xFFFF6B6B)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('حساب جديد', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                const Text('انضم إلى مشمش وابدأ رحلتك الآن', style: TextStyle(color: Color(0xFF636E72), fontSize: 13)),
+                const SizedBox(height: 24),
                 TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(hintText: 'الاسم', prefixIcon: Icon(Icons.person_outlined)),
-                  validator: (v) => v == null || v.isEmpty ? 'أدخل الاسم' : null,
+                  decoration: const InputDecoration(hintText: 'الاسم الكامل', prefixIcon: Icon(Icons.person_outlined)),
+                  validator: (v) => v == null || v.trim().isEmpty ? 'أدخل الاسم' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -66,8 +86,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   textDirection: TextDirection.ltr,
                   decoration: const InputDecoration(hintText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'أدخل البريد الإلكتروني';
-                    if (!v.contains('@')) return 'بريد غير صحيح';
+                    if (v == null || v.trim().isEmpty) return 'أدخل البريد الإلكتروني';
+                    if (!v.contains('@') || !v.contains('.')) return 'صيغة البريد غير صحيحة';
                     return null;
                   },
                 ),
@@ -93,9 +113,16 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _confirmController,
-                  obscureText: true,
+                  obscureText: _obscureConfirm,
                   textDirection: TextDirection.ltr,
-                  decoration: const InputDecoration(hintText: 'تأكيد كلمة المرور', prefixIcon: Icon(Icons.lock_outlined)),
+                  decoration: InputDecoration(
+                    hintText: 'تأكيد كلمة المرور',
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscureConfirm ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                    ),
+                  ),
                   validator: (v) => v != _passwordController.text ? 'كلمتا المرور غير متطابقتين' : null,
                 ),
                 const SizedBox(height: 30),

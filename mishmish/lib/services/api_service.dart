@@ -1,15 +1,32 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  // Auto-switch: web -> 127.0.0.1, phone/emulator -> LAN IP.
-  // For Android emulator use 10.0.2.2 ; for physical phone use your PC's LAN IP (see README).
+  // For physical devices over Wi-Fi, set your PC's LAN IP here:
+  // static String? overrideHost = '192.168.1.100';
+  static String? overrideHost;
+
   static String get baseUrl {
-    if (kIsWeb) return 'http://127.0.0.1:8000/api';
-    // Physical device: your PC's IP on the same Wi-Fi (run `hostname -I` or `ipconfig`)
-    return 'http://125.31.81.253:8000/api';
+    if (overrideHost != null && overrideHost!.isNotEmpty) {
+      return 'http://$overrideHost:8000/api';
+    }
+    if (kIsWeb) {
+      return 'http://127.0.0.1:8000/api';
+    }
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        // 10.0.2.2 connects to host localhost on standard Android Emulator
+        return 'http://10.0.2.2:8000/api';
+      case TargetPlatform.iOS:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+      case TargetPlatform.linux:
+        return 'http://127.0.0.1:8000/api';
+      default:
+        return 'http://10.0.2.2:8000/api';
+    }
   }
   static String? _token;
 

@@ -40,15 +40,23 @@ class _FavoritesTabState extends State<FavoritesTab> {
     if (loading) return const Center(child: CircularProgressIndicator(color: Color(0xFFFF6B6B)));
 
     if (favorites.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('💔', style: TextStyle(fontSize: 60)),
-            SizedBox(height: 10),
-            Text('لا توجد مفضلة بعد', style: TextStyle(fontSize: 18, color: Color(0xFF636E72))),
-            SizedBox(height: 5),
-            Text('أضف قططك المفضلة من الرئيسية', style: TextStyle(color: Color(0xFF636E72))),
+            Container(
+              width: 80,
+              height: 80,
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFF0F0),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.favorite_border_rounded, size: 40, color: Color(0xFFFF6B6B)),
+            ),
+            const SizedBox(height: 16),
+            const Text('قائمة المفضلة فارغة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
+            const Text('أضف قططك المفضلة من الرئيسية للرجوع إليها لاحقاً', style: TextStyle(color: Color(0xFF636E72))),
           ],
         ),
       );
@@ -71,7 +79,12 @@ class _FavoritesTabState extends State<FavoritesTab> {
                 child: Image.network(
                   'https://cataas.com/cat?width=100&height=100&random=${k.id}',
                   width: 70, height: 70, fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(width: 70, height: 70, color: const Color(0xFFFFE0E0), child: const Center(child: Text('🐱'))),
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 70,
+                    height: 70,
+                    color: const Color(0xFFFFF0F0),
+                    child: const Center(child: Icon(Icons.pets, color: Color(0xFFFF6B6B))),
+                  ),
                 ),
               ),
               title: Text(k.name, style: const TextStyle(fontWeight: FontWeight.bold)),

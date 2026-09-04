@@ -1,0 +1,53 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.atom/
+.swiftpm/
+.swp
+*~
+
+# Flutter
+mishmish/.dart_tool/
+mishmish/.flutter-plugins
+mishmish/.flutter-plugins-dependencies
+mishmish/build/
+mishmish/.packages
+mishmish/pubspec.lock
+
+# Laravel
+mishmish-api/.env
+mishmish-api/.env.backup
+mishmish-api/.env.production
+mishmish-api/vendor/
+mishmish-api/node_modules/
+mishmish-api/public/build/
+mishmish-api/public/hot
+mishmish-api/public/storage
+mishmish-api/storage/*.key
+mishmish-api/storage/logs/
+mishmish-api/storage/framework/cache/
+mishmish-api/storage/framework/sessions/
+mishmish-api/storage/framework/views/
+mishmish-api/bootstrap/cache/
+mishmish-api/.phpunit.result.cache
+mishmish-api/Homestead.*
+
+# Node / Showcase
+showcase/node_modules/
+showcase/dist/
+showcase/.vite/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Temp
+/tmp/

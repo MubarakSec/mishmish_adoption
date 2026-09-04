@@ -21,8 +21,8 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
       setState(() => _isFavorite = isFav);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(isFav ? 'تمت الإضافة للمفضلة ❤️' : 'تمت الإزالة من المفضلة'),
-          backgroundColor: isFav ? Colors.green : Colors.grey,
+          content: Text(isFav ? 'تمت الإضافة إلى المفضلة' : 'تمت الإزالة من المفضلة'),
+          backgroundColor: isFav ? Colors.green : Colors.grey.shade700,
           duration: const Duration(seconds: 1),
         ));
       }
@@ -39,10 +39,17 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('🎉 مبروك!'),
-        content: Text('لقد تبنيت ${widget.kitten.name} بنجاح!\nسيتواصل معك فريقنا قريباً.'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.check_circle_rounded, color: Colors.green, size: 28),
+            SizedBox(width: 8),
+            Text('طلب التبني'),
+          ],
+        ),
+        content: Text('تم تسجيل رغبتك في تبني ${widget.kitten.name} بنجاح!\nسيتواصل معك فريق مشمش قريباً.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('رائع!')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('حسناً')),
         ],
       ),
     );

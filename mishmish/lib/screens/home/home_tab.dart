@@ -39,8 +39,58 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     if (loading) return const Center(child: CircularProgressIndicator(color: Color(0xFFFF6B6B)));
-    if (error != null) return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text(error!), const SizedBox(height: 10), ElevatedButton(onPressed: () { setState(() { loading = true; error = null; }); _fetch(); }, child: const Text('حاول مرة أخرى'))]));
-    if (kittens.isEmpty) return const Center(child: Text('لا توجد قطط حالياً'));
+    if (error != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 70,
+                height: 70,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFF0F0),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.wifi_off_rounded, size: 36, color: Color(0xFFFF6B6B)),
+              ),
+              const SizedBox(height: 16),
+              Text(error!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 15, color: Color(0xFF636E72))),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() { loading = true; error = null; });
+                  _fetch();
+                },
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('إعادة المحاولة'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    if (kittens.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 70,
+              height: 70,
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFF0F0),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.pets, size: 36, color: Color(0xFFFF6B6B)),
+            ),
+            const SizedBox(height: 16),
+            const Text('لا توجد قطط متاحة حالياً', style: TextStyle(fontSize: 16, color: Color(0xFF636E72))),
+          ],
+        ),
+      );
+    }
 
     return RefreshIndicator(
       onRefresh: () async { setState(() => loading = true); await _fetch(); },

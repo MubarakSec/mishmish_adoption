@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
+import '../../services/notification_service.dart';
 import 'reset_password_screen.dart';
 
 class VerifyCodeScreen extends StatefulWidget {
@@ -57,17 +58,9 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
     setState(() => _resending = true);
     try {
       final res = await ApiService.forgotPassword(widget.email);
-      if (mounted) {
-        final code = res['code'];
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(code != null
-                ? 'تم إعادة الإرسال! (رمز التحقق الجديد: $code)'
-                : 'تم إعادة إرسال رمز التحقق إلى بريدك الإلكتروني بنجاح'),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 8),
-          ),
-        );
+      final code = res['code'];
+      if (code != null) {
+        await NotificationService.showOtpNotification(code.toString());
       }
     } catch (e) {
       if (mounted) {

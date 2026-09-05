@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
+import '../../services/notification_service.dart';
 import 'verify_code_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -23,15 +24,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       final res = await ApiService.forgotPassword(_emailController.text.trim());
       if (mounted) {
         final code = res['code'];
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(code != null
-                ? 'تم إرسال الرمز بنجاح! (رمز التحقق: $code)'
-                : 'تم إرسال رمز التحقق إلى بريدك بنجاح'),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 8),
-          ),
-        );
+        if (code != null) {
+          await NotificationService.showOtpNotification(code.toString());
+        }
+        if (!mounted) return;
         Navigator.push(
           context,
           MaterialPageRoute(

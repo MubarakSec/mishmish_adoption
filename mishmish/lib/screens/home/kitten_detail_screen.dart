@@ -64,7 +64,7 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final k = widget.kitten;
-    final imageUri = k.imageUrl.isNotEmpty ? k.imageUrl : 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600';
+    final imageUri = k.imageUrlResolved;
 
     return Scaffold(
       body: CustomScrollView(
@@ -76,10 +76,14 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
               background: Image.network(
                 imageUri,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  color: const Color(0xFFFFF0F0),
-                  child: const Center(
-                    child: Icon(Icons.pets, size: 80, color: Color(0xFFFF6B6B)),
+                errorBuilder: (context, error, stackTrace) => Image.asset(
+                  k.localAssetPath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (ctx, err, st) => Container(
+                    color: const Color(0xFFFFF0F0),
+                    child: const Center(
+                      child: Icon(Icons.pets, size: 80, color: Color(0xFFFF6B6B)),
+                    ),
                   ),
                 ),
               ),

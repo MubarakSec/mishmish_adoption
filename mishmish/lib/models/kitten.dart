@@ -1,3 +1,5 @@
+import '../services/api_service.dart';
+
 class Kitten {
   final int id;
   final String name;
@@ -18,6 +20,20 @@ class Kitten {
     required this.imageUrl,
     this.isFavorite = false,
   });
+
+  String get imageUrlResolved {
+    if (imageUrl.isEmpty) return '';
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    final host = ApiService.baseUrl.replaceAll('/api', '');
+    return '$host$imageUrl';
+  }
+
+  String get localAssetPath {
+    final fileName = imageUrl.split('/').last;
+    return 'assets/images/cats/$fileName';
+  }
 
   Kitten copyWith({
     int? id,

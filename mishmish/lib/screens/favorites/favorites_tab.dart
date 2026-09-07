@@ -77,13 +77,17 @@ class _FavoritesTabState extends State<FavoritesTab> {
               leading: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  k.imageUrl.isNotEmpty ? k.imageUrl : 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600',
+                  k.imageUrlResolved,
                   width: 70, height: 70, fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: 70,
-                    height: 70,
-                    color: const Color(0xFFFFF0F0),
-                    child: const Center(child: Icon(Icons.pets, color: Color(0xFFFF6B6B))),
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                    k.localAssetPath,
+                    width: 70, height: 70, fit: BoxFit.cover,
+                    errorBuilder: (ctx, err, st) => Container(
+                      width: 70,
+                      height: 70,
+                      color: const Color(0xFFFFF0F0),
+                      child: const Center(child: Icon(Icons.pets, color: Color(0xFFFF6B6B))),
+                    ),
                   ),
                 ),
               ),

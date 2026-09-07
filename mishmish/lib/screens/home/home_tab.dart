@@ -260,7 +260,7 @@ class _KittenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUri = kitten.imageUrl.isNotEmpty ? kitten.imageUrl : 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600';
+    final imageUri = kitten.imageUrlResolved;
 
     return GestureDetector(
       onTap: onTap,
@@ -288,11 +288,17 @@ class _KittenCard extends StatelessWidget {
                     height: 130,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      kitten.localAssetPath,
                       height: 130,
-                      color: const Color(0xFFFFF0F0),
-                      child: const Center(
-                        child: Icon(Icons.pets, size: 44, color: Color(0xFFFF6B6B)),
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (ctx, err, st) => Container(
+                        height: 130,
+                        color: const Color(0xFFFFF0F0),
+                        child: const Center(
+                          child: Icon(Icons.pets, size: 44, color: Color(0xFFFF6B6B)),
+                        ),
                       ),
                     ),
                   ),

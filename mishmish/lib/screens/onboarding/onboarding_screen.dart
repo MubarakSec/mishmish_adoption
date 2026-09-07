@@ -68,7 +68,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             color: iconColor.withValues(alpha: 0.12),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(page['icon'] as IconData, size: 64, color: iconColor),
+                          clipBehavior: Clip.antiAlias,
+                          child: index == 0
+                              ? Image.asset('assets/icon/cat_icon.png', fit: BoxFit.cover)
+                              : Icon(page['icon'] as IconData, size: 64, color: iconColor),
                         ),
                         const SizedBox(height: 36),
                         Text(

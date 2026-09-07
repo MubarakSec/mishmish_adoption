@@ -109,6 +109,10 @@ class AuthController extends Controller
             return response()->json(['message' => 'رمز التحقق غير صحيح'], 422);
         }
 
+        if (\Carbon\Carbon::parse($record->created_at)->addMinutes(15)->isPast()) {
+            return response()->json(['message' => 'انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد'], 422);
+        }
+
         return response()->json(['message' => 'تم التحقق بنجاح']);
     }
 
@@ -116,10 +120,28 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
+            'code' => 'required|string',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
+        $record = DB::table('password_reset_tokens')
+            ->where('email', $request->email)
+            ->where('token', $request->code)
+            ->first();
+
+        if (!$record) {
+            return response()->json(['message' => 'رمز التحقق غير صحيح أو لم يتم التحقق منه'], 422);
+        }
+
+        if (\Carbon\Carbon::parse($record->created_at)->addMinutes(15)->isPast()) {
+            return response()->json(['message' => 'انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد'], 422);
+        }
+
         $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return response()->json(['message' => 'المستخدم غير موجود'], 404);
+        }
+
         $user->update(['password' => Hash::make($request->password)]);
 
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();

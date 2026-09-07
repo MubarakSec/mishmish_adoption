@@ -77,7 +77,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
               leading: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  'https://cataas.com/cat?width=100&height=100&random=${k.id}',
+                  k.imageUrl.isNotEmpty ? k.imageUrl : 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600',
                   width: 70, height: 70, fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     width: 70,

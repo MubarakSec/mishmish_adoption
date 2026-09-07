@@ -4,7 +4,8 @@ import 'login_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String email;
-  const ResetPasswordScreen({super.key, required this.email});
+  final String code;
+  const ResetPasswordScreen({super.key, required this.email, required this.code});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -35,7 +36,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
     setState(() => _loading = true);
     try {
-      await ApiService.resetPassword(widget.email, password);
+      await ApiService.resetPassword(widget.email, password, widget.code);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

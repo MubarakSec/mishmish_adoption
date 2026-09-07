@@ -37,7 +37,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => ResetPasswordScreen(email: widget.email)),
+          MaterialPageRoute(builder: (_) => ResetPasswordScreen(email: widget.email, code: code)),
         );
       }
     } catch (e) {

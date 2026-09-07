@@ -122,11 +122,16 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  static Future<Map<String, dynamic>> resetPassword(String email, String password) async {
+  static Future<Map<String, dynamic>> resetPassword(String email, String password, String code) async {
     final response = await _post(
       '/reset-password',
       headers: await _headers(),
-      body: jsonEncode({'email': email, 'password': password, 'password_confirmation': password}),
+      body: jsonEncode({
+        'email': email,
+        'code': code,
+        'password': password,
+        'password_confirmation': password,
+      }),
     );
     return _handleResponse(response);
   }
@@ -153,10 +158,26 @@ class ApiService {
   }
 
   static dynamic _handleResponse(http.Response response) {
-    final body = jsonDecode(response.body);
+    dynamic body;
+    try {
+      body = jsonDecode(response.body);
+    } catch (_) {
+      if (response.statusCode >= 500) {
+        throw Exception('خطأ في خادم النظام (${response.statusCode})، يرجى المحاولة لاحقاً');
+      }
+      throw Exception('استجابة غير صالحة من الخادم (${response.statusCode})');
+    }
+
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return body;
     }
-    throw Exception(body['message'] ?? 'حدث خطأ');
+
+    if (body is Map && body.containsKey('errors')) {
+      final errors = body['errors'] as Map<String, dynamic>;
+      final firstMsg = errors.values.expand((e) => e as List).firstOrNull;
+      if (firstMsg != null) throw Exception(firstMsg.toString());
+    }
+
+    throw Exception(body is Map && body.containsKey('message') ? body['message'] : 'حدث خطأ غير متوقع');
   }
 }

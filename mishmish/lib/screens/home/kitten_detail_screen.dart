@@ -11,8 +11,14 @@ class KittenDetailScreen extends StatefulWidget {
 }
 
 class _KittenDetailScreenState extends State<KittenDetailScreen> {
-  bool _isFavorite = false;
+  late bool _isFavorite;
   bool _favLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isFavorite = widget.kitten.isFavorite;
+  }
 
   Future<void> _toggleFavorite() async {
     setState(() => _favLoading = true);
@@ -58,6 +64,8 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final k = widget.kitten;
+    final imageUri = k.imageUrl.isNotEmpty ? k.imageUrl : 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600';
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -66,7 +74,7 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               background: Image.network(
-                'https://cataas.com/cat?width=600&height=600&random=${k.id}',
+                imageUri,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
                   color: const Color(0xFFFFF0F0),

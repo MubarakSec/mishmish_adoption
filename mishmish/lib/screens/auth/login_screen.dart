@@ -18,11 +18,19 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   bool _loading = false;
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
-      final result = await ApiService.login(_emailController.text, _passwordController.text);
+      final result = await ApiService.login(
+          _emailController.text.trim(), _passwordController.text);
       await ApiService.setToken(result['token']);
       await ApiService.saveUser(result['user']['name'], result['user']['email']);
       if (mounted) {
@@ -72,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 36),
                 TextFormField(
                   controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   textDirection: TextDirection.ltr,
                   decoration: const InputDecoration(
                     hintText: 'البريد أو اسم المستخدم (Email / User)',

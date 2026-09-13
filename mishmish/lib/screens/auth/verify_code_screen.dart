@@ -16,6 +16,12 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   bool _loading = false;
   bool _resending = false;
 
+  @override
+  void dispose() {
+    _codeController.dispose();
+    super.dispose();
+  }
+
   Future<void> _verify() async {
     final code = _codeController.text.trim();
     if (code.isEmpty) {

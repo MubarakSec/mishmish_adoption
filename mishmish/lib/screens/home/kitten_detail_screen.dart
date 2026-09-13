@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import '../../models/kitten.dart';
 import '../../services/api_service.dart';
+import '../../widgets/kitten_image.dart';
 
 class KittenDetailScreen extends StatefulWidget {
   final Kitten kitten;
@@ -73,19 +75,11 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
             expandedHeight: 300,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: Image.network(
-                imageUri,
+              background: KittenImage(
+                networkUrl: imageUri,
+                assetPath: k.localAssetPath,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Image.asset(
-                  k.localAssetPath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (ctx, err, st) => Container(
-                    color: const Color(0xFFFFF0F0),
-                    child: const Center(
-                      child: Icon(Icons.pets, size: 80, color: Color(0xFFFF6B6B)),
-                    ),
-                  ),
-                ),
+                iconSize: 80,
               ),
             ),
             actions: [

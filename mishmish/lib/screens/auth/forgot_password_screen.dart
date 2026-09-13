@@ -14,14 +14,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
   bool _loading = false;
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
   Future<void> _send() async {
-    if (_emailController.text.isEmpty) {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('أدخل البريد الإلكتروني'), backgroundColor: Colors.red));
+      return;
+    }
+    if (!email.contains('@') || !email.contains('.')) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('صيغة البريد غير صحيحة'), backgroundColor: Colors.red));
       return;
     }
     setState(() => _loading = true);
     try {
-      final res = await ApiService.forgotPassword(_emailController.text.trim());
+      final res = await ApiService.forgotPassword(email);
       if (mounted) {
         final code = res['code'];
         if (code != null) {
@@ -31,7 +42,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => VerifyCodeScreen(email: _emailController.text.trim()),
+            builder: (_) => VerifyCodeScreen(email: email),
           ),
         );
       }

@@ -18,6 +18,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   bool _obscureConfirm = true;
   bool _loading = false;
 
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
+
   Future<void> _reset() async {
     final password = _passwordController.text;
     final confirm = _confirmController.text;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
-import 'login_screen.dart';
+import '../home/home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -19,18 +19,27 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _obscureConfirm = true;
   bool _loading = false;
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
+
   Future<void> _signup() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
       final result = await ApiService.register(
-        _nameController.text, _emailController.text, _passwordController.text,
+        _nameController.text.trim(), _emailController.text.trim(), _passwordController.text,
       );
       await ApiService.setToken(result['token']);
       await ApiService.saveUser(result['user']['name'], result['user']['email']);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم إنشاء الحساب بنجاح!'), backgroundColor: Colors.green));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const HomeScreen()), (r) => false);
       }
     } catch (e) {
       if (mounted) {

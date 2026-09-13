@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../config/app_config.dart';
+import '../config/theme.dart';
 import 'onboarding/onboarding_screen.dart';
 import 'auth/login_screen.dart';
 import 'home/home_screen.dart';
@@ -25,15 +27,19 @@ class _SplashScreenState extends State<SplashScreen> {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
 
-    final onboardingDone = prefs.getBool('onboarding_done') ?? false;
-    final token = prefs.getString('auth_token');
+    final onboardingDone =
+        prefs.getBool(AppConfig.keyOnboardingDone) ?? false;
+    final token = prefs.getString(AppConfig.keyAuthToken);
 
     if (!onboardingDone) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const OnboardingScreen()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (_) => const OnboardingScreen()));
     } else if (token == null) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()));
     } else {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()));
     }
   }
 
@@ -49,11 +55,11 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF0F0),
-                borderRadius: BorderRadius.circular(24),
+                color: AppColors.primarySoft,
+                borderRadius: BorderRadius.circular(AppRadius.xl),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFF6B6B).withValues(alpha: 0.15),
+                    color: AppColors.primary.withValues(alpha: 0.15),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -64,7 +70,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 'assets/icon/cat_icon.png',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => const Center(
-                  child: Icon(Icons.pets, size: 50, color: Color(0xFFFF6B6B)),
+                  child:
+                      Icon(Icons.pets, size: 50, color: AppColors.primary),
                 ),
               ),
             ),
@@ -74,21 +81,21 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(
                 fontSize: 34,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFFF6B6B),
+                color: AppColors.primary,
                 letterSpacing: 0.5,
               ),
             ),
             const SizedBox(height: 8),
             const Text(
               'اعثر على قطتك المفضلة واعتنقها بحب',
-              style: TextStyle(fontSize: 15, color: Color(0xFF636E72)),
+              style: TextStyle(fontSize: 15, color: AppColors.textLight),
             ),
             const SizedBox(height: 40),
             const SizedBox(
               width: 28,
               height: 28,
               child: CircularProgressIndicator(
-                color: Color(0xFFFF6B6B),
+                color: AppColors.primary,
                 strokeWidth: 2.5,
               ),
             ),

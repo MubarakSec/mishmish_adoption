@@ -102,7 +102,7 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
                       Expanded(child: Text(k.name, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold))),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(color: const Color(0xFFFF6B6B), borderRadius: BorderRadius.circular(20)),
+                        decoration: BoxDecoration(color: const AppColors.primary, borderRadius: BorderRadius.circular(20)),
                         child: Text('${k.price.toStringAsFixed(0)} ر.س', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                     ],
@@ -118,7 +118,7 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
                   const SizedBox(height: 20),
                   const Text('عن القط', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  Text(k.description, style: const TextStyle(fontSize: 15, color: Color(0xFF636E72), height: 1.6)),
+                  Text(k.description, style: const TextStyle(fontSize: 15, color: AppColors.textLight, height: 1.6)),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
@@ -134,9 +134,9 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       onPressed: _favLoading ? null : _toggleFavorite,
-                      icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border, color: const Color(0xFFFF6B6B)),
+                      icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border, color: const AppColors.primary),
                       label: Text(_isFavorite ? 'إزالة من المفضلة' : 'إضافة للمفضلة'),
-                      style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), side: const BorderSide(color: Color(0xFFFF6B6B))),
+                      style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), side: const BorderSide(color: AppColors.primary)),
                     ),
                   ),
                 ],

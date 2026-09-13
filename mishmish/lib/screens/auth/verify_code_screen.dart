@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import '../../services/api_service.dart';
 import '../../services/notification_service.dart';
 import 'reset_password_screen.dart';
@@ -97,10 +98,10 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                color: const Color(0xFFFF6B6B).withValues(alpha: 0.12),
+                color: const AppColors.primary.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.mark_email_unread_outlined, size: 46, color: Color(0xFFFF6B6B)),
+              child: const Icon(Icons.mark_email_unread_outlined, size: 46, color: AppColors.primary),
             ),
             const SizedBox(height: 24),
             const Text(
@@ -111,13 +112,13 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
             Text(
               widget.email,
               textDirection: TextDirection.ltr,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFFFF6B6B)),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.primary),
             ),
             const SizedBox(height: 8),
             const Text(
               'أدخل رمز التحقق المكون من 6 أرقام المرسل إلى بريدك',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF636E72), height: 1.4),
+              style: TextStyle(color: AppColors.textLight, height: 1.4),
             ),
             const SizedBox(height: 36),
             TextField(

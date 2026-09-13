@@ -21,8 +21,7 @@ class ApiService {
       return await request().timeout(AppConfig.requestTimeout);
     } catch (_) {
       // Android emulator cannot reach host localhost: fall back to 10.0.2.2.
-      if (!kIsWeb &&
-          defaultTargetPlatform == TargetPlatform.android &&
+      if (defaultTargetPlatform == TargetPlatform.android &&
           AppConfig.activeHost == '127.0.0.1' &&
           AppConfig.overrideHost == null) {
         AppConfig.activeHost = '10.0.2.2';

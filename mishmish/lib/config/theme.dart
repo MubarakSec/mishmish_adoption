@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 /// typography, spacing and radii. Screens should reference these
 /// instead of hardcoding values.
 class AppColors {
-  static const primary = Color(0xFFFF6B6B);
-  static const primarySoft = Color(0xFFFFF0F0);
-  static const secondary = Color(0xFF4ECDC4);
-  static const background = Color(0xFFF7F7F7);
-  static const surface = Colors.white;
-  static const card = Colors.white;
-  static const text = Color(0xFF2D3436);
-  static const textLight = Color(0xFF636E72);
-  static const border = Color(0xFFDDDDDD);
-  static const error = Color(0xFFE74C3C);
-  static const success = Colors.green;
+  static const Color primary = Color(0xFFFF6B6B);
+  static const Color primarySoft = Color(0xFFFFF0F0);
+  static const Color secondary = Color(0xFF4ECDC4);
+  static const Color background = Color(0xFFF7F7F7);
+  static const Color surface = Colors.white;
+  static const Color card = Colors.white;
+  static const Color text = Color(0xFF2D3436);
+  static const Color textLight = Color(0xFF636E72);
+  static const Color border = Color(0xFFDDDDDD);
+  static const Color error = Color(0xFFE74C3C);
+  static const Color success = Colors.green;
 }
 
 class AppSpacing {

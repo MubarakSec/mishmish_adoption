@@ -179,6 +179,14 @@ class ApiService {
       return body;
     }
 
+    if (response.statusCode == 401) {
+      throw Exception('يرجى تسجيل الدخول أولاً لإضافة المفضلة');
+    }
+
+    if (response.statusCode == 404) {
+      throw Exception(body is Map && body.containsKey('message') ? body['message'] : 'العنصر غير موجود');
+    }
+
     if (body is Map && body.containsKey('errors')) {
       final errors = body['errors'] as Map<String, dynamic>;
       final firstMsg = errors.values.expand((e) => e as List).firstOrNull;

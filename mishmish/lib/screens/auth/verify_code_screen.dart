@@ -98,7 +98,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                color: const AppColors.primary.withValues(alpha: 0.12),
+                color: AppColors.primary.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.mark_email_unread_outlined, size: 46, color: AppColors.primary),

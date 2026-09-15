@@ -30,8 +30,10 @@ class _FavoritesTabState extends State<FavoritesTab> {
       if (!mounted) return;
       setState(() {
         favorites = data.map((e) {
-          final k = e['kitten'] ?? e;
-          return Kitten.fromJson(k);
+          final dynamic raw = e['kitten'] ?? e;
+          final k = Kitten.fromJson(Map<String, dynamic>.from(raw as Map));
+          // Items coming from /favorites are favorites by definition
+          return k.copyWith(isFavorite: true);
         }).toList();
         loading = false;
         error = null;
@@ -39,8 +41,8 @@ class _FavoritesTabState extends State<FavoritesTab> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        error = e.toString().replaceAll('Exception: ', '');
         loading = false;
+        error = e.toString().replaceAll('Exception: ', '');
       });
     }
   }
@@ -105,21 +107,28 @@ class _FavoritesTabState extends State<FavoritesTab> {
                 onPressed: () async {
                   try {
                     await ApiService.toggleFavorite(k.id);
+                    _fetch();
                   } catch (e) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              e.toString().replaceAll('Exception: ', '')),
-                          backgroundColor: AppColors.error));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(e.toString().replaceAll('Exception: ', '')),
+                          backgroundColor: AppColors.error,
+                        ),
+                      );
                     }
                   }
-                  _fetch();
                 },
               ),
-              onTap: () => Navigator.push(
+              onTap: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => KittenDetailScreen(kitten: k))),
+                    builder: (_) => KittenDetailScreen(kitten: k),
+                  ),
+                );
+                if (mounted) _fetch();
+              },
             ),
           );
         },

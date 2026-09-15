@@ -15,7 +15,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   int _currentPage = 0;
 
-  final List<Map<String, dynamic>> _pages = const [
+  final List<Map<String, dynamic>> _pages = [
     {
       'icon': Icons.pets_rounded,
       'color': AppColors.primary,
@@ -108,7 +108,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   width: _currentPage == i ? 24 : 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: _currentPage == i ? const AppColors.primary : const Color(0xFFDDDDDD),
+                    color: _currentPage == i ? AppColors.primary : const Color(0xFFDDDDDD),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 );

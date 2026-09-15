@@ -67,7 +67,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: const AppColors.primarySoft,
+                    color: AppColors.primarySoft,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   clipBehavior: Clip.antiAlias,

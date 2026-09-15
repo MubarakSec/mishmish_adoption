@@ -59,14 +59,14 @@ class Kitten {
 
   factory Kitten.fromJson(Map<String, dynamic> json) {
     return Kitten(
-      id: json['id'],
-      name: json['name'],
-      breed: json['breed'],
-      age: json['age'],
-      description: json['description'],
-      price: double.parse(json['price'].toString()),
-      imageUrl: json['image_url'] ?? '',
-      isFavorite: json['is_favorite'] == true,
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      name: json['name']?.toString() ?? '',
+      breed: json['breed']?.toString() ?? '',
+      age: json['age']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      price: double.tryParse(json['price']?.toString() ?? '') ?? 0.0,
+      imageUrl: json['image_url']?.toString() ?? '',
+      isFavorite: json['is_favorite'] == true || json['is_favorite'] == 1,
     );
   }
 }

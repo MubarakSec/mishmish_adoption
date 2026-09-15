@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Favorite;
+use App\Models\Kitten;
 use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
@@ -11,6 +12,7 @@ class FavoriteController extends Controller
     public function index(Request $request)
     {
         $favorites = Favorite::where('user_id', $request->user()->id)
+            ->whereHas('kitten')
             ->with('kitten')
             ->get();
 
@@ -19,6 +21,11 @@ class FavoriteController extends Controller
 
     public function toggle(Request $request, $kittenId)
     {
+        $kitten = Kitten::find($kittenId);
+        if (!$kitten) {
+            return response()->json(['message' => 'القط غير موجود'], 404);
+        }
+
         $existing = Favorite::where('user_id', $request->user()->id)
             ->where('kitten_id', $kittenId)
             ->first();

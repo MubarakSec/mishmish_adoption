@@ -13,6 +13,7 @@ class FavoritesTab extends StatefulWidget {
 class _FavoritesTabState extends State<FavoritesTab> {
   List<Kitten> favorites = [];
   bool loading = true;
+  String? error;
 
   @override
   void initState() {
@@ -23,21 +24,57 @@ class _FavoritesTabState extends State<FavoritesTab> {
   Future<void> _fetch() async {
     try {
       final data = await ApiService.getFavorites();
+      if (!mounted) return;
       setState(() {
         favorites = data.map((e) {
-          final k = e['kitten'] ?? e;
-          return Kitten.fromJson(k);
+          final dynamic raw = e['kitten'] ?? e;
+          final k = Kitten.fromJson(Map<String, dynamic>.from(raw as Map));
+          // Items coming from /favorites are favorites by definition
+          return k.copyWith(isFavorite: true);
         }).toList();
         loading = false;
+        error = null;
       });
     } catch (e) {
-      setState(() => loading = false);
+      if (!mounted) return;
+      setState(() {
+        loading = false;
+        error = e.toString().replaceAll('Exception: ', '');
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (loading) return const Center(child: CircularProgressIndicator(color: Color(0xFFFF6B6B)));
+
+    if (error != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.wifi_off_rounded, size: 44, color: Color(0xFFFF6B6B)),
+              const SizedBox(height: 12),
+              Text(error!, textAlign: TextAlign.center, style: const TextStyle(color: Color(0xFF636E72))),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    loading = true;
+                    error = null;
+                  });
+                  _fetch();
+                },
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('إعادة المحاولة'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     if (favorites.isEmpty) {
       return Center(
@@ -96,11 +133,25 @@ class _FavoritesTabState extends State<FavoritesTab> {
               trailing: IconButton(
                 icon: const Icon(Icons.favorite, color: Color(0xFFFF6B6B)),
                 onPressed: () async {
-                  await ApiService.toggleFavorite(k.id);
-                  _fetch();
+                  try {
+                    await ApiService.toggleFavorite(k.id);
+                    _fetch();
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(e.toString().replaceAll('Exception: ', '')),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
                 },
               ),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => KittenDetailScreen(kitten: k))),
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (_) => KittenDetailScreen(kitten: k)));
+                if (mounted) _fetch();
+              },
             ),
           );
         },

@@ -3,73 +3,70 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../config/app_config.dart';
+
+/// Thin HTTP layer over the Laravel REST API (Android + iOS only).
+///
+/// Uses [AppConfig] for host/timeouts so the base URL is defined once.
+/// Auth token + cached profile fields persist in SharedPreferences.
 class ApiService {
-  // Manual override if needed:
-  // static String? overrideHost = '192.168.1.100';
-  static String? overrideHost;
-  static String _activeHost = '127.0.0.1';
+  ApiService._();
 
-  static String get baseUrl {
-    if (overrideHost != null && overrideHost!.isNotEmpty) {
-      return 'http://$overrideHost:8000/api';
-    }
-    return 'http://$_activeHost:8000/api';
-  }
+  static String get baseUrl => AppConfig.baseUrl;
 
-  static Future<http.Response> _post(String endpoint, {Map<String, String>? headers, Object? body}) async {
+  static Future<http.Response> _send(
+    Future<http.Response> Function() request,
+  ) async {
     try {
-      return await http
-          .post(Uri.parse('$baseUrl$endpoint'), headers: headers, body: body)
-          .timeout(const Duration(seconds: 4));
+      return await request().timeout(AppConfig.requestTimeout);
     } catch (_) {
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android && _activeHost == '127.0.0.1') {
-        _activeHost = '10.0.2.2';
-        return await http.post(Uri.parse('$baseUrl$endpoint'), headers: headers, body: body);
+      // Android emulator cannot reach host localhost: fall back to 10.0.2.2.
+      if (defaultTargetPlatform == TargetPlatform.android &&
+          AppConfig.activeHost == '127.0.0.1' &&
+          AppConfig.overrideHost == null) {
+        AppConfig.activeHost = '10.0.2.2';
+        return await request().timeout(AppConfig.requestTimeout);
       }
       rethrow;
     }
   }
 
-  static Future<http.Response> _get(String endpoint, {Map<String, String>? headers}) async {
-    try {
-      return await http
-          .get(Uri.parse('$baseUrl$endpoint'), headers: headers)
-          .timeout(const Duration(seconds: 4));
-    } catch (_) {
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android && _activeHost == '127.0.0.1') {
-        _activeHost = '10.0.2.2';
-        return await http.get(Uri.parse('$baseUrl$endpoint'), headers: headers);
-      }
-      rethrow;
-    }
-  }
+  static Future<http.Response> _post(String endpoint,
+          {Map<String, String>? headers, Object? body}) =>
+      _send(() => http.post(Uri.parse('$baseUrl$endpoint'),
+          headers: headers, body: body));
+
+  static Future<http.Response> _get(String endpoint,
+          {Map<String, String>? headers}) =>
+      _send(() => http.get(Uri.parse('$baseUrl$endpoint'), headers: headers));
+
   static String? _token;
 
   static Future<String?> getToken() async {
     if (_token != null) return _token;
     final prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString('auth_token');
+    _token = prefs.getString(AppConfig.keyAuthToken);
     return _token;
   }
 
   static Future<void> setToken(String token) async {
     _token = token;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('auth_token', token);
+    await prefs.setString(AppConfig.keyAuthToken, token);
   }
 
   static Future<void> clearToken() async {
     _token = null;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
-    await prefs.remove('user_name');
-    await prefs.remove('user_email');
+    await prefs.remove(AppConfig.keyAuthToken);
+    await prefs.remove(AppConfig.keyUserName);
+    await prefs.remove(AppConfig.keyUserEmail);
   }
 
   static Future<void> saveUser(String name, String email) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_name', name);
-    await prefs.setString('user_email', email);
+    await prefs.setString(AppConfig.keyUserName, name);
+    await prefs.setString(AppConfig.keyUserEmail, email);
   }
 
   static Future<Map<String, String>> _headers() async {
@@ -81,16 +78,23 @@ class ApiService {
     };
   }
 
-  static Future<Map<String, dynamic>> register(String name, String email, String password) async {
+  static Future<Map<String, dynamic>> register(
+      String name, String email, String password) async {
     final response = await _post(
       '/register',
       headers: await _headers(),
-      body: jsonEncode({'name': name, 'email': email, 'password': password, 'password_confirmation': password}),
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'password': password,
+        'password_confirmation': password
+      }),
     );
     return _handleResponse(response);
   }
 
-  static Future<Map<String, dynamic>> login(String email, String password) async {
+  static Future<Map<String, dynamic>> login(
+      String email, String password) async {
     final response = await _post(
       '/login',
       headers: await _headers(),
@@ -113,7 +117,8 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  static Future<Map<String, dynamic>> verifyCode(String email, String code) async {
+  static Future<Map<String, dynamic>> verifyCode(
+      String email, String code) async {
     final response = await _post(
       '/verify-code',
       headers: await _headers(),
@@ -122,7 +127,8 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  static Future<Map<String, dynamic>> resetPassword(String email, String password, String code) async {
+  static Future<Map<String, dynamic>> resetPassword(
+      String email, String password, String code) async {
     final response = await _post(
       '/reset-password',
       headers: await _headers(),
@@ -163,7 +169,8 @@ class ApiService {
       body = jsonDecode(response.body);
     } catch (_) {
       if (response.statusCode >= 500) {
-        throw Exception('خطأ في خادم النظام (${response.statusCode})، يرجى المحاولة لاحقاً');
+        throw Exception(
+            'خطأ في خادم النظام (${response.statusCode})، يرجى المحاولة لاحقاً');
       }
       throw Exception('استجابة غير صالحة من الخادم (${response.statusCode})');
     }
@@ -186,6 +193,8 @@ class ApiService {
       if (firstMsg != null) throw Exception(firstMsg.toString());
     }
 
-    throw Exception(body is Map && body.containsKey('message') ? body['message'] : 'حدث خطأ غير متوقع');
+    throw Exception(body is Map && body.containsKey('message')
+        ? body['message']
+        : 'حدث خطأ غير متوقع');
   }
 }

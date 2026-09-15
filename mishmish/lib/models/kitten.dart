@@ -1,4 +1,4 @@
-import '../services/api_service.dart';
+import '../config/app_config.dart';
 
 class Kitten {
   final int id;
@@ -26,8 +26,7 @@ class Kitten {
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl;
     }
-    final host = ApiService.baseUrl.replaceAll('/api', '');
-    return '$host$imageUrl';
+    return '${AppConfig.serverRoot}$imageUrl';
   }
 
   String get localAssetPath {
@@ -63,7 +62,6 @@ class Kitten {
       name: json['name']?.toString() ?? '',
       breed: json['breed']?.toString() ?? '',
       age: json['age']?.toString() ?? '',
-      description: json['description']?.toString() ?? '',
       price: double.tryParse(json['price']?.toString() ?? '') ?? 0.0,
       imageUrl: json['image_url']?.toString() ?? '',
       isFavorite: json['is_favorite'] == true || json['is_favorite'] == 1,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../config/app_config.dart';
 import '../auth/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -16,7 +18,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<Map<String, dynamic>> _pages = const [
     {
       'icon': Icons.pets_rounded,
-      'color': Color(0xFFFF6B6B),
+      'color': AppColors.primary,
       'title': 'مشمش',
       'subtitle': 'المنصة المثالية لتبني القطط والاعتناء بها في بيئة آمنة ومليئة بالحب'
     },
@@ -36,9 +38,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _completeOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('onboarding_done', true);
+    await prefs.setBool(AppConfig.keyOnboardingDone, true);
     if (!mounted) return;
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -83,7 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         Text(
                           page['subtitle'] as String,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 15, color: Color(0xFF636E72), height: 1.5),
+                          style: const TextStyle(fontSize: 15, color: AppColors.textLight, height: 1.5),
                         ),
                       ],
                     ),
@@ -100,7 +108,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   width: _currentPage == i ? 24 : 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: _currentPage == i ? const Color(0xFFFF6B6B) : const Color(0xFFDDDDDD),
+                    color: _currentPage == i ? const AppColors.primary : const Color(0xFFDDDDDD),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 );
@@ -134,7 +142,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             if (_currentPage < _pages.length - 1)
               TextButton(
                 onPressed: _completeOnboarding,
-                child: const Text('تخطي', style: TextStyle(color: Color(0xFF636E72), fontSize: 14)),
+                child: const Text('تخطي', style: TextStyle(color: AppColors.textLight, fontSize: 14)),
               )
             else
               const SizedBox(height: 48),

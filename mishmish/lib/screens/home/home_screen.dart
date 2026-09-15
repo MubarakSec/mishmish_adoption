@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import 'home_tab.dart';
 import '../favorites/favorites_tab.dart';
 import '../profile/profile_tab.dart';
@@ -26,13 +27,13 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 32,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: const Color(0xFFFFF0F0),
+                color: const AppColors.primarySoft,
               ),
               clipBehavior: Clip.antiAlias,
               child: Image.asset(
                 'assets/icon/cat_icon.png',
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.pets, size: 20, color: Color(0xFFFF6B6B)),
+                errorBuilder: (context, error, stackTrace) => const Icon(Icons.pets, size: 20, color: AppColors.primary),
               ),
             ),
             const SizedBox(width: 10),
@@ -49,8 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
-        selectedItemColor: const Color(0xFFFF6B6B),
-        unselectedItemColor: const Color(0xFF636E72),
+        selectedItemColor: const AppColors.primary,
+        unselectedItemColor: const AppColors.textLight,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),

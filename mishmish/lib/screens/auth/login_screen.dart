@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import '../../services/api_service.dart';
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
@@ -18,11 +19,19 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   bool _loading = false;
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
-      final result = await ApiService.login(_emailController.text, _passwordController.text);
+      final result = await ApiService.login(
+          _emailController.text.trim(), _passwordController.text);
       await ApiService.setToken(result['token']);
       await ApiService.saveUser(result['user']['name'], result['user']['email']);
       if (mounted) {
@@ -53,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: 84,
                   height: 84,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFF0F0),
+                    color: const AppColors.primarySoft,
                     borderRadius: BorderRadius.circular(22),
                   ),
                   clipBehavior: Clip.antiAlias,
@@ -61,17 +70,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     'assets/icon/cat_icon.png',
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => const Center(
-                      child: Icon(Icons.pets, size: 44, color: Color(0xFFFF6B6B)),
+                      child: Icon(Icons.pets, size: 44, color: AppColors.primary),
                     ),
                   ),
                 ),
                 const SizedBox(height: 18),
                 const Text('تسجيل الدخول', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 6),
-                const Text('مرحباً بعودتك إلى مشمش!', style: TextStyle(color: Color(0xFF636E72), fontSize: 14)),
+                const Text('مرحباً بعودتك إلى مشمش!', style: TextStyle(color: AppColors.textLight, fontSize: 14)),
                 const SizedBox(height: 36),
                 TextFormField(
                   controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   textDirection: TextDirection.ltr,
                   decoration: const InputDecoration(
                     hintText: 'البريد أو اسم المستخدم (Email / User)',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import '../../services/api_service.dart';
-import 'login_screen.dart';
+import '../home/home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -19,18 +20,27 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _obscureConfirm = true;
   bool _loading = false;
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
+
   Future<void> _signup() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
       final result = await ApiService.register(
-        _nameController.text, _emailController.text, _passwordController.text,
+        _nameController.text.trim(), _emailController.text.trim(), _passwordController.text,
       );
       await ApiService.setToken(result['token']);
       await ApiService.saveUser(result['user']['name'], result['user']['email']);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم إنشاء الحساب بنجاح!'), backgroundColor: Colors.green));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const HomeScreen()), (r) => false);
       }
     } catch (e) {
       if (mounted) {
@@ -57,7 +67,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFF0F0),
+                    color: const AppColors.primarySoft,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   clipBehavior: Clip.antiAlias,
@@ -65,14 +75,14 @@ class _SignupScreenState extends State<SignupScreen> {
                     'assets/icon/cat_icon.png',
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => const Center(
-                      child: Icon(Icons.pets, size: 40, color: Color(0xFFFF6B6B)),
+                      child: Icon(Icons.pets, size: 40, color: AppColors.primary),
                     ),
                   ),
                 ),
                 const SizedBox(height: 16),
                 const Text('حساب جديد', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                const Text('انضم إلى مشمش وابدأ رحلتك الآن', style: TextStyle(color: Color(0xFF636E72), fontSize: 13)),
+                const Text('انضم إلى مشمش وابدأ رحلتك الآن', style: TextStyle(color: AppColors.textLight, fontSize: 13)),
                 const SizedBox(height: 24),
                 TextFormField(
                   controller: _nameController,

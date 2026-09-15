@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import '../../models/kitten.dart';
 import '../../services/api_service.dart';
+import '../../widgets/kitten_image.dart';
 
 class KittenDetailScreen extends StatefulWidget {
   final Kitten kitten;
@@ -73,19 +75,11 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
             expandedHeight: 300,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: Image.network(
-                imageUri,
+              background: KittenImage(
+                networkUrl: imageUri,
+                assetPath: k.localAssetPath,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Image.asset(
-                  k.localAssetPath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (ctx, err, st) => Container(
-                    color: const Color(0xFFFFF0F0),
-                    child: const Center(
-                      child: Icon(Icons.pets, size: 80, color: Color(0xFFFF6B6B)),
-                    ),
-                  ),
-                ),
+                iconSize: 80,
               ),
             ),
             actions: [
@@ -108,7 +102,7 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
                       Expanded(child: Text(k.name, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold))),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(color: const Color(0xFFFF6B6B), borderRadius: BorderRadius.circular(20)),
+                        decoration: BoxDecoration(color: const AppColors.primary, borderRadius: BorderRadius.circular(20)),
                         child: Text('${k.price.toStringAsFixed(0)} ر.س', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                     ],
@@ -124,7 +118,7 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
                   const SizedBox(height: 20),
                   const Text('عن القط', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  Text(k.description, style: const TextStyle(fontSize: 15, color: Color(0xFF636E72), height: 1.6)),
+                  Text(k.description, style: const TextStyle(fontSize: 15, color: AppColors.textLight, height: 1.6)),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
@@ -140,9 +134,9 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       onPressed: _favLoading ? null : _toggleFavorite,
-                      icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border, color: const Color(0xFFFF6B6B)),
+                      icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border, color: const AppColors.primary),
                       label: Text(_isFavorite ? 'إزالة من المفضلة' : 'إضافة للمفضلة'),
-                      style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), side: const BorderSide(color: Color(0xFFFF6B6B))),
+                      style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), side: const BorderSide(color: AppColors.primary)),
                     ),
                   ),
                 ],

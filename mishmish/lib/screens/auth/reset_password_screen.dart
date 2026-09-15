@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import '../../services/api_service.dart';
 import 'login_screen.dart';
 
@@ -17,6 +18,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
   bool _loading = false;
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
 
   Future<void> _reset() async {
     final password = _passwordController.text;
@@ -80,10 +88,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                color: const Color(0xFFFF6B6B).withValues(alpha: 0.12),
+                color: const AppColors.primary.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.lock_reset_rounded, size: 48, color: Color(0xFFFF6B6B)),
+              child: const Icon(Icons.lock_reset_rounded, size: 48, color: AppColors.primary),
             ),
             const SizedBox(height: 24),
             const Text(
@@ -94,7 +102,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             const Text(
               'قم بإدخال كلمة المرور الجديدة وتأكيدها لحسابك',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF636E72), height: 1.4),
+              style: TextStyle(color: AppColors.textLight, height: 1.4),
             ),
             const SizedBox(height: 32),
             TextField(

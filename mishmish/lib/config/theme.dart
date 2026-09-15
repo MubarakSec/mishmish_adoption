@@ -1,13 +1,51 @@
 import 'package:flutter/material.dart';
 
+/// Lightweight design system: single source of truth for colors,
+/// typography, spacing and radii. Screens should reference these
+/// instead of hardcoding values.
 class AppColors {
   static const primary = Color(0xFFFF6B6B);
+  static const primarySoft = Color(0xFFFFF0F0);
   static const secondary = Color(0xFF4ECDC4);
   static const background = Color(0xFFF7F7F7);
+  static const surface = Colors.white;
   static const card = Colors.white;
   static const text = Color(0xFF2D3436);
   static const textLight = Color(0xFF636E72);
+  static const border = Color(0xFFDDDDDD);
   static const error = Color(0xFFE74C3C);
+  static const success = Colors.green;
+}
+
+class AppSpacing {
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 16;
+  static const double lg = 24;
+  static const double xl = 32;
+}
+
+class AppRadius {
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+  static const double xl = 24;
+}
+
+class AppTextStyles {
+  static const headline = TextStyle(
+    fontSize: 26,
+    fontWeight: FontWeight.bold,
+    color: AppColors.text,
+  );
+  static const title = TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.bold,
+    color: AppColors.text,
+  );
+  static const subtitle = TextStyle(fontSize: 15, color: AppColors.textLight);
+  static const body = TextStyle(fontSize: 15, color: AppColors.text);
+  static const caption = TextStyle(fontSize: 13, color: AppColors.textLight);
 }
 
 class AppTheme {

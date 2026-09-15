@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import '../../services/api_service.dart';
 import '../../models/kitten.dart';
+import '../../widgets/kitten_image.dart';
+import '../../widgets/state_views.dart';
 import 'kitten_detail_screen.dart';
 
 class HomeTab extends StatefulWidget {
@@ -16,11 +19,18 @@ class _HomeTabState extends State<HomeTab> {
   String? _error;
   String _searchQuery = '';
   String _selectedBreed = 'الكل';
+  final _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _fetch();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetch() async {
@@ -72,7 +82,9 @@ class _HomeTabState extends State<HomeTab> {
           }
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text(e.toString().replaceAll('Exception: ', '')),
+              backgroundColor: AppColors.error),
         );
       }
     }
@@ -83,7 +95,8 @@ class _HomeTabState extends State<HomeTab> {
       final matchesSearch = k.name.contains(_searchQuery) ||
           k.breed.contains(_searchQuery) ||
           k.description.contains(_searchQuery);
-      final matchesBreed = _selectedBreed == 'الكل' || k.breed.contains(_selectedBreed);
+      final matchesBreed =
+          _selectedBreed == 'الكل' || k.breed.contains(_selectedBreed);
       return matchesSearch && matchesBreed;
     }).toList();
   }
@@ -99,39 +112,19 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Center(child: CircularProgressIndicator(color: Color(0xFFFF6B6B)));
+      return const LoadingView(message: 'جاري تحميل القطط...');
     }
 
     if (_error != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 70,
-                height: 70,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFF0F0),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.wifi_off_rounded, size: 36, color: Color(0xFFFF6B6B)),
-              ),
-              const SizedBox(height: 16),
-              Text(_error!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 15, color: Color(0xFF636E72))),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  setState(() { _loading = true; _error = null; });
-                  _fetch();
-                },
-                icon: const Icon(Icons.refresh, size: 18),
-                label: const Text('إعادة المحاولة'),
-              ),
-            ],
-          ),
-        ),
+      return ErrorView(
+        message: _error!,
+        onRetry: () {
+          setState(() {
+            _loading = true;
+            _error = null;
+          });
+          _fetch();
+        },
       );
     }
 
@@ -147,15 +140,18 @@ class _HomeTabState extends State<HomeTab> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: TextField(
+              controller: _searchController,
               onChanged: (val) => setState(() => _searchQuery = val.trim()),
               decoration: InputDecoration(
                 hintText: 'ابحث عن اسم أو سلالة القط...',
-                prefixIcon: const Icon(Icons.search, color: Color(0xFFFF6B6B)),
+                prefixIcon:
+                    const Icon(Icons.search, color: AppColors.primary),
                 filled: true,
                 fillColor: const Color(0xFFF9F9F9),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 12),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
                   borderSide: BorderSide.none,
                 ),
               ),
@@ -177,15 +173,18 @@ class _HomeTabState extends State<HomeTab> {
                   child: ChoiceChip(
                     label: Text(breed),
                     selected: isSelected,
-                    selectedColor: const Color(0xFFFF6B6B),
+                    selectedColor: AppColors.primary,
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : const Color(0xFF636E72),
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color:
+                          isSelected ? Colors.white : AppColors.textLight,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                       fontSize: 13,
                     ),
                     backgroundColor: const Color(0xFFF1F2F6),
                     onSelected: (selected) {
-                      setState(() => _selectedBreed = selected ? breed : 'الكل');
+                      setState(
+                          () => _selectedBreed = selected ? breed : 'الكل');
                     },
                   ),
                 );
@@ -198,27 +197,15 @@ class _HomeTabState extends State<HomeTab> {
           // Grid View
           Expanded(
             child: filtered.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 70,
-                          height: 70,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFFF0F0),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.pets, size: 36, color: Color(0xFFFF6B6B)),
-                        ),
-                        const SizedBox(height: 16),
-                        const Text('لا توجد قطط مطابقة للبحث', style: TextStyle(fontSize: 16, color: Color(0xFF636E72))),
-                      ],
-                    ),
+                ? const EmptyView(
+                    icon: Icons.pets,
+                    title: 'لا توجد قطط مطابقة للبحث',
+                    subtitle: 'جرّب كلمة بحث مختلفة أو غيّر فلتر السلالة',
                   )
                 : GridView.builder(
                     padding: const EdgeInsets.all(12),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 0.72,
                       crossAxisSpacing: 12,
@@ -233,7 +220,9 @@ class _HomeTabState extends State<HomeTab> {
                         onTap: () async {
                           await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => KittenDetailScreen(kitten: kitten)),
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    KittenDetailScreen(kitten: kitten)),
                           );
                           _fetch();
                         },
@@ -260,14 +249,12 @@ class _KittenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUri = kitten.imageUrlResolved;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
@@ -282,25 +269,13 @@ class _KittenCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  child: Image.network(
-                    imageUri,
+                  borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(AppRadius.lg)),
+                  child: KittenImage(
+                    networkUrl: kitten.imageUrlResolved,
+                    assetPath: kitten.localAssetPath,
                     height: 130,
                     width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Image.asset(
-                      kitten.localAssetPath,
-                      height: 130,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (ctx, err, st) => Container(
-                        height: 130,
-                        color: const Color(0xFFFFF0F0),
-                        child: const Center(
-                          child: Icon(Icons.pets, size: 44, color: Color(0xFFFF6B6B)),
-                        ),
-                      ),
-                    ),
                   ),
                 ),
                 Positioned(
@@ -321,9 +296,13 @@ class _KittenCard extends StatelessWidget {
                         ],
                       ),
                       child: Icon(
-                        kitten.isFavorite ? Icons.favorite : Icons.favorite_border,
+                        kitten.isFavorite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
                         size: 18,
-                        color: kitten.isFavorite ? Colors.red : const Color(0xFFFF6B6B),
+                        color: kitten.isFavorite
+                            ? Colors.red
+                            : AppColors.primary,
                       ),
                     ),
                   ),
@@ -337,21 +316,25 @@ class _KittenCard extends StatelessWidget {
                 children: [
                   Text(
                     kitten.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     '${kitten.breed} • ${kitten.age}',
-                    style: const TextStyle(fontSize: 11, color: Color(0xFF636E72)),
+                    style: const TextStyle(
+                        fontSize: 11, color: AppColors.textLight),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
                   Text(
                     '${kitten.price.toStringAsFixed(0)} ر.س',
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFFF6B6B)),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary),
                   ),
                 ],
               ),

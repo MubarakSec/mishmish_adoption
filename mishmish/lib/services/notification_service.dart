@@ -6,15 +6,24 @@ class NotificationService {
 
   static Future<void> initialize() async {
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initSettings = InitializationSettings(android: androidInit);
+    const iosInit = DarwinInitializationSettings();
+    const initSettings =
+        InitializationSettings(android: androidInit, iOS: iosInit);
     await _plugin.initialize(settings: initSettings);
 
-    // Request permissions on Android 13+ if applicable
+    // Request permissions on Android 13+ if applicable.
     final androidImpl =
         _plugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
     if (androidImpl != null) {
       await androidImpl.requestNotificationsPermission();
+    }
+
+    // Request permissions on iOS/macOS.
+    final iosImpl = _plugin.resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>();
+    if (iosImpl != null) {
+      await iosImpl.requestPermissions(alert: true, badge: true, sound: true);
     }
   }
 
@@ -29,7 +38,9 @@ class NotificationService {
       enableVibration: true,
       showWhen: true,
     );
-    const details = NotificationDetails(android: androidDetails);
+    const iosDetails = DarwinNotificationDetails();
+    const details =
+        NotificationDetails(android: androidDetails, iOS: iosDetails);
 
     await _plugin.show(
       id: 1001,

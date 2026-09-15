@@ -10,7 +10,7 @@ class Kitten {
   final String imageUrl;
   final bool isFavorite;
 
-  Kitten({
+  const Kitten({
     required this.id,
     required this.name,
     required this.breed,
@@ -62,6 +62,7 @@ class Kitten {
       name: json['name']?.toString() ?? '',
       breed: json['breed']?.toString() ?? '',
       age: json['age']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
       price: double.tryParse(json['price']?.toString() ?? '') ?? 0.0,
       imageUrl: json['image_url']?.toString() ?? '',
       isFavorite: json['is_favorite'] == true || json['is_favorite'] == 1,

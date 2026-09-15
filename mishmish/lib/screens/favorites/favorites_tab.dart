@@ -40,6 +40,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
       });
     } catch (e) {
       if (!mounted) return;
+      setState(() {
         loading = false;
         error = e.toString().replaceAll('Exception: ', '');
       });

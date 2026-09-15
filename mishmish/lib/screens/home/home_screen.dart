@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 32,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: const AppColors.primarySoft,
+                color: AppColors.primarySoft,
               ),
               clipBehavior: Clip.antiAlias,
               child: Image.asset(
@@ -50,8 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
-        selectedItemColor: const AppColors.primary,
-        unselectedItemColor: const AppColors.textLight,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textLight,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),

@@ -102,7 +102,7 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
                       Expanded(child: Text(k.name, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold))),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(color: const AppColors.primary, borderRadius: BorderRadius.circular(20)),
+                        decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(20)),
                         child: Text('${k.price.toStringAsFixed(0)} ر.س', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                     ],
@@ -134,7 +134,7 @@ class _KittenDetailScreenState extends State<KittenDetailScreen> {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       onPressed: _favLoading ? null : _toggleFavorite,
-                      icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border, color: const AppColors.primary),
+                      icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border, color: AppColors.primary),
                       label: Text(_isFavorite ? 'إزالة من المفضلة' : 'إضافة للمفضلة'),
                       style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), side: const BorderSide(color: AppColors.primary)),
                     ),
